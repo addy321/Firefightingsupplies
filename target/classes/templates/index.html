@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+<title>管理后台</title>
+<link
+	href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	rel="stylesheet">
+<link href="../css/dashboard.css" rel="stylesheet">
+</head>
+<style>
+html, body {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+/* 挡住大刻度的中间 */
+#calibration-big-cover {
+	width: 82%;
+	height: 82%;
+	top: 9%;
+	left: 9%;
+	position: absolute;
+	border: none;
+	border-radius: 50%;
+	background-color: #fff;
+	box-sizing: border-box;
+}
+/* 挡住小刻度的中间 */
+#calibration-small-cover {
+	width: 87%;
+	height: 87%;
+	top: 6.5%;
+	left: 6.5%;
+	position: absolute;
+	border: none;
+	border-radius: 50%;
+	background-color: #fff;
+	box-sizing: border-box;
+}
+/* 小刻度 */
+.calibration-small {
+	background-color: #000000;
+	width: 1%;
+	height: 96%;
+	border: none;
+	box-sizing: border-box;
+	position: absolute;
+	top: 2%;
+	left: 49.5%;
+	transform: translateX(-50%);
+}
+
+/* 大刻度 */
+.calibration-big {
+	background-color: #000000;
+	width: 2%;
+	height: 100%;
+	border: none;
+	box-sizing: border-box;
+	position: absolute;
+	top: 0%;
+	left: 49%;
+	transform: translateX(-50%);
+}
+/* 时钟的最外围，可随意设置大小 */
+.clock {
+	margin: auto;
+	margin-top: 350px;
+	top: 50%;
+	transform: translateY(-50%);
+	box-sizing: border-box;
+	width: 560px;
+	height: 560px;
+	position: relative;
+	display: block;
+	overflow: hidden;
+}
+/* 时钟的边框 */
+#clock-border {
+	background-color: #fff;
+	border: 6px solid #222222;
+	box-sizing: border-box;
+	border-radius: 50%;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+/* 时针 */
+.hour-hand {
+	width: 3%;
+	height: 48%;
+	border: none;
+	box-sizing: border-box;
+	position: absolute;
+	top: 26%;
+	left: 48.5%;
+}
+/* 分针 */
+.min-hand {
+	width: 3%;
+	height: 70%;
+	border: none;
+	box-sizing: border-box;
+	position: absolute;
+	top: 15%;
+	left: 48.5%;
+}
+/* 秒针 */
+.sec-hand {
+	width: 2%;
+	height: 76%;
+	border: none;
+	box-sizing: border-box;
+	position: absolute;
+	top: 12%;
+	left: 49%;
+}
+/* 指针的显示部分 */
+.clock-show {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 52%;
+	border: none;
+	box-sizing: border-box;
+}
+</style>
+<body>
+	<!-- 头部 -->
+	<div th:replace="./public/head :: public_head"></div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 菜单栏 -->
+			<div th:replace="./public/MenuBar :: public_menuBar"></div>
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			
+				
+
+				<!-- 时钟 -->
+				<div class="clock" id="clock">
+
+					<!-- 外边框 -->
+					<div id="clock-border"></div>
+
+
+
+					<!-- 小刻度 -->
+					<div class="calibration-small" style="transform: rotate(6deg)"></div>
+					<div class="calibration-small" style="transform: rotate(12deg)"></div>
+					<div class="calibration-small" style="transform: rotate(18deg)"></div>
+					<div class="calibration-small" style="transform: rotate(24deg)"></div>
+
+					<div class="calibration-small" style="transform: rotate(36deg)"></div>
+					<div class="calibration-small" style="transform: rotate(42deg)"></div>
+					<div class="calibration-small" style="transform: rotate(48deg)"></div>
+					<div class="calibration-small" style="transform: rotate(54deg)"></div>
+
+					<div class="calibration-small" style="transform: rotate(66deg)"></div>
+					<div class="calibration-small" style="transform: rotate(72deg)"></div>
+					<div class="calibration-small" style="transform: rotate(78deg)"></div>
+					<div class="calibration-small" style="transform: rotate(84deg)"></div>
+
+					<div class="calibration-small" style="transform: rotate(96deg)"></div>
+					<div class="calibration-small" style="transform: rotate(102deg)"></div>
+					<div class="calibration-small" style="transform: rotate(108deg)"></div>
+					<div class="calibration-small" style="transform: rotate(114deg)"></div>
+
+					<div class="calibration-small" style="transform: rotate(126deg)"></div>
+					<div class="calibration-small" style="transform: rotate(132deg)"></div>
+					<div class="calibration-small" style="transform: rotate(138deg)"></div>
+					<div class="calibration-small" style="transform: rotate(144deg)"></div>
+
+					<div class="calibration-small" style="transform: rotate(156deg)"></div>
+					<div class="calibration-small" style="transform: rotate(162deg)"></div>
+					<div class="calibration-small" style="transform: rotate(168deg)"></div>
+					<div class="calibration-small" style="transform: rotate(174deg)"></div>
+
+
+
+					<!-- 挡住小刻度的中间 -->
+					<div id="calibration-small-cover"></div>
+
+
+
+					<!-- 大刻度 -->
+					<div class="calibration-big" style="transform: rotate(0deg)"></div>
+					<div class="calibration-big" style="transform: rotate(30deg)"></div>
+					<div class="calibration-big" style="transform: rotate(60deg)"></div>
+					<div class="calibration-big" style="transform: rotate(90deg)"></div>
+					<div class="calibration-big" style="transform: rotate(120deg)"></div>
+					<div class="calibration-big" style="transform: rotate(150deg)"></div>
+
+
+
+					<!-- 挡住大刻度的中间 -->
+					<div id="calibration-big-cover"></div>
+
+
+
+					<!-- 时针 -->
+					<div id="hour" class="hour-hand" style="">
+						<div class="clock-show" style="background-color: rgb(0, 0, 0);"></div>
+					</div>
+
+
+
+					<!-- 分针 -->
+					<div id="minute" class="min-hand" style="">
+						<div class="clock-show" style="background-color: rgb(0, 0, 0);"></div>
+					</div>
+
+
+
+					<!-- 秒针 -->
+					<div id="second" class="sec-hand">
+						<div class="clock-show"
+							style="background-color: rgb(255, 20, 67);"></div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script>
+		window.jQuery
+				|| document
+						.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')
+	</script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="../js/holder.min.js"></script>
+	<script src="../js/index.js"></script>
+	<script>
+      changeTime();
+      function changeTime() {
+        //获取时间
+        let timer = new Date();
+        //处理小时
+        if (timer.getHours() > 12) {
+          document.getElementById("hour").style.transform =
+            "rotate(" +
+            (360 * ((timer.getHours() - 12) / 12) +
+              (timer.getMinutes() / 60) * 30) +
+            "deg)";
+        } else {
+          document.getElementById("hour").style.transform =
+            "rotate(" +
+            (360 * ((timer.getHours() - 12) / 12) +
+              (timer.getMinutes() / 60) * 30) +
+            "deg)";
+        }
+        //处理分钟
+        document.getElementById("minute").style.transform =
+          "rotate(" +
+          (360 * (timer.getMinutes() / 60) + (timer.getSeconds() / 60) * 6) +
+          "deg)";
+        //处理秒
+        document.getElementById("second").style.transform =
+          "rotate(" + 360 * (timer.getSeconds() / 60) + "deg)";
+      }
+      setInterval(changeTime, 1000);
+    </script>
+</body>
+</html>

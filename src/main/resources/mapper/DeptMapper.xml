@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jdbc.dao.DeptDao">
+	<!-- 返回值映射map -->
+	<resultMap id="deptMapper" type="com.jdbc.model.DeptModel">
+			<result property="id" column="id" />
+			<result property="deptName" column="dept_name" />
+			<result property="createTime" column="create_time" />
+			<result property="remark" column="remark" />
+	</resultMap>
+	
+	<!-- 查询数量公共sql -->
+	<sql id="count_Tail">
+		select count(1) from dept record
+	</sql>
+	
+	<!-- 分页公共sql -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.pageSize}
+	</sql>
+
+	<!-- 查询字段公共sql -->
+	<sql id="selectAllColumns">
+	    SELECT 
+	    <if test="queryFields != null ">
+	 	     <trim prefix="" suffix="" suffixOverrides=",">
+		        <foreach collection="queryFields" item="fi" index="index">
+		          ${fi},
+		        </foreach>
+		      </trim> 	
+	  	</if>
+	    <if test="queryFields == null ">
+	  		<![CDATA[
+				 id, 
+				 dept_name, 
+				 create_time, 
+				 remark 
+			]]>
+	  	</if>
+	     FROM dept record
+	</sql>
+	
+	<sql id="where_fragement">
+		<where> 
+			<if test="entity!=null">
+					<if test = "entity.id != null and entity.id != ''">
+						<![CDATA[ and record.id  = #{entity.id} ]]>
+					</if>
+					<if test = "entity.deptName != null and entity.deptName != ''">
+						<![CDATA[ and record.dept_name  = #{entity.deptName} ]]>
+					</if>
+					<if test = "entity.createTime != null and entity.createTime != ''">
+						<![CDATA[ and record.create_time  = #{entity.createTime} ]]>
+					</if>
+					<if test = "entity.remark != null and entity.remark != ''">
+						<![CDATA[ and record.remark  = #{entity.remark} ]]>
+					</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="time_sort">
+		order by id asc
+	</sql>
+
+	<!-- 分页查询数据集合-->
+	<select id="queryPageDept" resultMap="deptMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+		
+	</select>
+	
+	<!-- 不分页查询数据集合-->
+	<select id="queryListDept" resultMap="deptMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="queryCountDept" resultType="long">
+		<include refid="count_Tail"></include>
+		<include refid="where_fragement"></include>
+	</select>
+
+	<!-- 查询单个实体 -->
+	<select id="queryDeptById" resultMap="deptMapper" >
+		<include refid="selectAllColumns"/>
+		 where 
+		 record.id = #{id}
+	</select>
+	
+	<!-- 新增列处理 -->
+	<sql id="sql_add_columns">
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="deptName != null">dept_name,</if>
+			<if test="createTime != null">create_time,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="sql_add_properties">
+		<trim suffixOverrides=",">
+				<if test="id != null">#{id},</if>
+				<if test="deptName != null">#{deptName},</if>
+				<if test="createTime != null">#{createTime},</if>
+				<if test="remark != null">#{remark},</if>
+		</trim>		
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="addDept" parameterType="com.jdbc.model.DeptModel">
+		insert into dept(
+			<include refid="sql_add_columns"/>
+		)values(
+			<include refid="sql_add_properties"/>
+		)
+	</insert>
+
+	<!-- 编辑 -->
+	<update id="updateDept" parameterType="com.jdbc.model.DeptModel">
+		update dept record 
+			<set>
+					<if test = "deptName != null ">
+						record.dept_name = #{deptName},
+					</if>
+					<if test = "createTime != null ">
+						record.create_time = #{createTime},
+					</if>
+					<if test = "remark != null ">
+						record.remark = #{remark}
+					</if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="removeDeptByIds" parameterType="java.util.List">
+		delete from dept 
+			where id in
+			<foreach collection="list" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+	</delete>
+
+	<delete id="removeDeptById">
+		delete from dept 
+		<if test=" id != null and id != ''">
+			where id = #{id}
+		</if>
+	</delete>
+	
+</mapper>

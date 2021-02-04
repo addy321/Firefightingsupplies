@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jdbc.dao.VendorDao">
+	<!-- 返回值映射map -->
+	<resultMap id="vendorMapper" type="com.jdbc.model.VendorModel">
+			<result property="id" column="id" />
+			<result property="vendorName" column="vendor_name" />
+			<result property="vendorAddress" column="vendor_address" />
+			<result property="contact" column="contact" />
+			<result property="phone" column="phone" />
+			<result property="remark" column="remark" />
+	</resultMap>
+	
+	<!-- 查询数量公共sql -->
+	<sql id="count_Tail">
+		select count(1) from vendor record
+	</sql>
+	
+	<!-- 分页公共sql -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.pageSize}
+	</sql>
+
+	<!-- 查询字段公共sql -->
+	<sql id="selectAllColumns">
+	    SELECT 
+	    <if test="queryFields != null ">
+	 	     <trim prefix="" suffix="" suffixOverrides=",">
+		        <foreach collection="queryFields" item="fi" index="index">
+		          ${fi},
+		        </foreach>
+		      </trim> 	
+	  	</if>
+	    <if test="queryFields == null ">
+	  		<![CDATA[
+				 id, 
+				 vendor_name, 
+				 vendor_address, 
+				 contact, 
+				 phone, 
+				 remark 
+			]]>
+	  	</if>
+	     FROM vendor record
+	</sql>
+	
+	<sql id="where_fragement">
+		<where> 
+			<if test="entity!=null">
+					<if test = "entity.id != null and entity.id != ''">
+						<![CDATA[ and record.id  = #{entity.id} ]]>
+					</if>
+					<if test = "entity.vendorName != null and entity.vendorName != ''">
+						<![CDATA[ and record.vendor_name like CONCAT('%', #{entity.vendorName},'%') ]]>
+					</if>
+					<if test = "entity.vendorAddress != null and entity.vendorAddress != ''">
+						<![CDATA[ and record.vendor_address  = #{entity.vendorAddress} ]]>
+					</if>
+					<if test = "entity.contact != null and entity.contact != ''">
+						<![CDATA[ and record.contact  = #{entity.contact} ]]>
+					</if>
+					<if test = "entity.phone != null and entity.phone != ''">
+						<![CDATA[ and record.phone  = #{entity.phone} ]]>
+					</if>
+					<if test = "entity.remark != null and entity.remark != ''">
+						<![CDATA[ and record.remark  = #{entity.remark} ]]>
+					</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="time_sort">
+		order by id asc
+	</sql>
+
+	<!-- 分页查询数据集合-->
+	<select id="queryPageVendor" resultMap="vendorMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+		
+	</select>
+	
+	<!-- 不分页查询数据集合-->
+	<select id="queryListVendor" resultMap="vendorMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="queryCountVendor" resultType="long">
+		<include refid="count_Tail"></include>
+		<include refid="where_fragement"></include>
+	</select>
+
+	<!-- 查询单个实体 -->
+	<select id="queryVendorById" resultMap="vendorMapper" >
+		<include refid="selectAllColumns"/>
+		 where 
+		 record.id = #{id}
+	</select>
+	
+	<!-- 新增列处理 -->
+	<sql id="sql_add_columns">
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="vendorName != null">vendor_name,</if>
+			<if test="vendorAddress != null">vendor_address,</if>
+			<if test="contact != null">contact,</if>
+			<if test="phone != null">phone,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="sql_add_properties">
+		<trim suffixOverrides=",">
+				<if test="id != null">#{id},</if>
+				<if test="vendorName != null">#{vendorName},</if>
+				<if test="vendorAddress != null">#{vendorAddress},</if>
+				<if test="contact != null">#{contact},</if>
+				<if test="phone != null">#{phone},</if>
+				<if test="remark != null">#{remark},</if>
+		</trim>		
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="addVendor" parameterType="com.jdbc.model.VendorModel">
+		insert into vendor(
+			<include refid="sql_add_columns"/>
+		)values(
+			<include refid="sql_add_properties"/>
+		)
+	</insert>
+
+	<!-- 编辑 -->
+	<update id="updateVendor" parameterType="com.jdbc.model.VendorModel">
+		update vendor record 
+			<set>
+					<if test = "vendorName != null ">
+						record.vendor_name = #{vendorName},
+					</if>
+					<if test = "vendorAddress != null ">
+						record.vendor_address = #{vendorAddress},
+					</if>
+					<if test = "contact != null ">
+						record.contact = #{contact},
+					</if>
+					<if test = "phone != null ">
+						record.phone = #{phone},
+					</if>
+					<if test = "remark != null ">
+						record.remark = #{remark}
+					</if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="removeVendorByIds" parameterType="java.util.List">
+		delete from vendor 
+			where id in
+			<foreach collection="list" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+	</delete>
+
+	<delete id="removeVendorById">
+		delete from vendor 
+		<if test=" id != null and id != ''">
+			where id = #{id}
+		</if>
+	</delete>
+	
+</mapper>

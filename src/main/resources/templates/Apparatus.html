@@ -1,0 +1,574 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+<title>管理后台</title>
+
+<!--bootstrap文件-->
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!--bootstrap-select文件-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<!--汉化组件-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-zh_CN.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>  
+<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>  
+
+<link href="../css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+	<!-- 头部 -->
+	<div th:replace="./public/head :: public_head"></div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 菜单栏 -->
+			<div th:replace="./public/MenuBar :: public_menuBar"></div>
+
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+				<h2 class="sub-header">
+					<a href="javascript:void(0);" class="addData">添加数据</a>
+				</h2>
+				
+				<div class="container-fluid">
+					<form action="/apparatus/list" method="post">
+						<div class="row">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+									条件查找
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+											<div class="form-horizontal">
+												<div class="form-group">
+													<div class="col-md-3 control-label" for="select">消防用品名称</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" runat="server"  th:value="${apparatusModel.apparatusName}"
+															name="apparatusName" />
+													</div>
+													<div class="col-md-3 control-label" for="select">进货价格</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" runat="server"  th:value="${apparatusModel.price}"
+															name="price" />
+													</div>
+												</div>
+											</div> 
+										</div>
+										 <div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+			                                <div class="form-horizontal">
+			                                    <div class="form-group">
+			                                        <div class="col-md-4 control-label" for="select">状态</div>
+			                                        <div class="col-md-4">
+			                                            <select class="selectpicker" name="state">
+			                                            	<option value="">全部</option>
+			                                           		<option value="0">可领用</option>
+														    <option value="1">不可领用</option>
+														</select>
+			                                        </div>
+			                                        <div class="col-md-4">
+			                                        </div>
+			                                    </div>
+			                                </div>
+			                            </div>
+										<div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+											<div class="form-horizontal">
+												 <div class="col-md-4">
+		                                            <input type="submit" ID="btnSearch" value=" 筛 选 "
+		                                                class="btn btn-success col-md-12 " />
+		                                        </div>
+											</div>
+										</div>
+									</div>
+									<!--查询 按钮-->
+								</div>
+							</div>
+
+							<!--/col-->
+						</div>
+					</form>
+					<!--/条件查找-->
+				</div>
+				
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>消防用品id</th>
+								<th>消防用品名称</th>
+								<th>品牌型号</th>
+								<th>进货价格</th>
+								<th>供应商id</th>
+								<th>入库时间</th>
+								<th>存放分类</th>
+								<th>存放位置</th>
+								<th>唯一标识号</th>
+								<th>生产日期</th>
+								<th>维护类型</th>
+								<th>下次维护时间</th>
+								<th>备注</th>
+								<th>状态</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="apparatus,apparatusStat:${apparatusList}">
+								<td th:text="${apparatus.id}"></td>
+								<td th:text="${apparatus.apparatusName}"></td>
+								<td th:text="${apparatus.model}"></td>
+								<td th:text="${apparatus.price}"></td>
+								<td th:text="${apparatus.vendorId}"></td>
+								<td th:text="${apparatus.storageTime}"></td>
+								<td th:switch="${apparatus.storageClassify}">
+									<span th:case="'1'">消防检测仪器仪表</span>
+									<span th:case="'2'">可更换器材及零配件</span>
+									<span th:case="'3'">工作防护用品</span>
+									<span th:case="'4'">其他</span>
+								</td>
+								<td th:text="${apparatus.location}"></td>
+								<td th:text="${apparatus.uin}"></td>
+								<td th:text="${apparatus.productionDate}"></td>
+								<td th:switch="${apparatus.mtype}">
+									<span th:case="'1'">校准</span>
+									<span th:case="'2'">送检</span>
+									<span th:case="'3'">维修保养</span>
+									<span th:case="'4'">报废</span>
+									<span th:case="'5'">其他</span>
+								</td>
+								<td th:text="${apparatus.nextMTime}"></td>
+								<td th:text="${apparatus.remark}"></td>
+								<td th:switch="${apparatus.state}">
+									<span th:case="'0'">可领用</span>
+									<span th:case="'1'">不可领用</span>
+								</td>
+								<td>
+								<a href="javascript:void(0);" class="tdFeatures editdata" th:attr="tdid=${apparatus.id}"
+								 th:if="${isadmin == true}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+						
+								 <a href="javascript:void(0);" th:each="menu,menuStat:${menus}"  th:if="${isadmin == true || #strings.containsIgnoreCase(menu.askurl,'/apparatus/saveData')}"
+								class="tdFeatures deldata" th:attr="tdid=${apparatus.id}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+						
+								 <a href="javascript:void(0);" th:if="${isadmin == true}"
+								class="tdFeatures deldata" th:attr="tdid=${apparatus.id}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+								&ensp;&ensp; <a href="javascript:void(0);" th:each="menu,menuStat:${menus}"  th:if="${isadmin == true || #strings.containsIgnoreCase(menu.askurl,'/apparatus/delData')}"
+								class="tdFeatures deldata" th:attr="tdid=${apparatus.id}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+				
+								<a href="javascript:void(0);" class="tdFeatures lingqu" th:attr="tdid=${apparatus.id}"><span
+									class="glyphicon glyphicon-lock" aria-hidden="true">领用</span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- 分页 -->
+				<div class="bs-example" data-example-id="disabled-active-pagination"
+					style="text-align: center;">
+					<nav aria-label="...">
+						<ul class="pagination">
+							<li th:class="${page.pageNow <= 1}? 'disabled' : ''"><a th:href="'/apparatus/list?pageNow='+${page.pageNow - 1}" aria-label="Previous"><span
+									aria-hidden="true">«</span></a></li>
+							
+							<li th:each="i,stat:${#numbers.sequence(1, page.pageCount)}" th:class="${page.pageNow == i}? 'active' : ''">
+								<a th:if="${i>0}" th:href="'/apparatus/list?pageNow='+${i}" th:text="${i}"></a>
+							</li>
+							<li><a th:href="'/apparatus/list?pageNow='+${page.pageNow + 1}" aria-label="Next" th:class="${page.pageNow >= page.pageCount}? 'disabled' : ''"><span
+									aria-hidden="true">»</span></a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="editfrom">
+		<h2>编辑表单</h2>
+		<form class="form-horizontal" role="form">
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">消防用品id</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputid" type="text"
+						placeholder="消防用品id" name="id" value="" disabled>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">消防用品名称</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputapparatus_name" type="text"
+						placeholder="消防用品名称" name="apparatus_name" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">品牌型号</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputmodel" type="text"
+						placeholder="品牌型号" name="model" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">进货价格</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputprice" type="text"
+						placeholder="进货价格" name="price" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">供应商id</label>
+				<div class="col-sm-10">
+					<select  id="inputvendor_id" name="vendor_id"  class="selectpicker"  title="请选择">
+					    <option th:each="vender,venderStat:${selectvendor}" th:text="${vender.vendorName}" th:attr="value=${vender.id}"></option>  
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group" hidden>
+				<label class="col-sm-2 control-label">入库时间</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputstorage_time" type="text"
+						placeholder="入库时间" name="storage_time" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">存放分类</label>
+				<div class="col-sm-10">
+					<select id="inputstorage_classify" class="selectpicker" name="storage_classify">
+					    <option value="1">消防检测仪器仪表</option>
+					    <option value="2">可更换器材及零配件</option>
+					    <option value="3">工作防护用品</option>
+					    <option value="4">其他</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">存放位置</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputlocation" type="text"
+						placeholder="存放位置" name="location" value="">
+				</div>
+			</div>
+
+			<div class="form-group" hidden>
+				<label class="col-sm-2 control-label">唯一标识号</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputuin" type="text"
+						placeholder="唯一标识号" name="uin" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">生产日期</label>
+				<div class="col-sm-10">
+					<div class='input-group date' id='datetimepicker2'>
+		               <input type='text' class="form-control"  id="inputProduction_date" name="Production_date"  />
+		               <span class="input-group-addon">
+		               		<span class="glyphicon glyphicon-calendar"></span>
+		               </span>
+		            </div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">维护类型</label>
+				<div class="col-sm-10">
+					<select id="inputm_type" name="m_type" class="selectpicker">
+					    <option value="1">校准</option>
+					    <option value="2">送检</option>
+					    <option value="3">维修保养</option>
+					    <option value="4">报废</option>
+					    <option value="5">其他</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">下次维护时间</label>
+				<div class="col-sm-10">
+				
+					<div class='input-group date' id='datetimepicker3'>
+		               <input type='text' class="form-control"  id="inputnext_m_time" name="next_m_time"  />
+		               <span class="input-group-addon">
+		               <span class="glyphicon glyphicon-calendar"></span>
+		               </span>
+		            </div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">备注</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputremark" type="text"
+						placeholder="备注" name="remark" value="">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">状态</label>
+				<div class="col-sm-10">
+					<select id="inputstate" name="state" class="selectpicker">
+					    <option value="0">可领用</option>
+					    <option value="1">不可领用</option>
+					</select>
+				</div>
+			</div>
+			
+
+			<div class="form-group">
+
+				<div class="form-button-div">
+					<a class="btn btn-primary saveData" href="#" role="button">保存</a>
+					&ensp;&ensp; <a class="btn btn-primary button-clone" href="#"
+						role="button">关闭</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<div class="lingqufrom">
+		<h2>编辑表单</h2>
+		<form class="form-horizontal" role="form">
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">消防用品id</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="lqinputid" type="text"
+						placeholder="消防用品id" name="id" value="" disabled>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">消防用品名称</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="lqinputapparatus_name" type="text"
+						placeholder="消防用品名称" name="apparatus_name" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">品牌型号</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="lqinputmodel" type="text"
+						placeholder="品牌型号" name="lqinputmodel" value="">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">进货价格</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="lqinputprice" type="text"
+						placeholder="进货价格" name="lqinputprice" value="">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">备注</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="lqbz" type="text"
+						placeholder="备注" name="lqbz" value="">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">归还时间</label>
+				<div class="col-sm-10">
+					<div class='input-group date' id='datetimepicker4'>
+		               <input type='text' class="form-control"  id="lqtime" name="lqtime"  />
+		               <span class="input-group-addon">
+		               <span class="glyphicon glyphicon-calendar"></span>
+		               </span>
+		            </div>
+				</div>
+			</div>
+
+			<div class="form-group">
+
+				<div class="form-button-div">
+					<a class="btn btn-primary lqsaveData" href="#" role="button">保存</a>
+					&ensp;&ensp; <a class="btn btn-primary" href="#" onclick="$('.lingqufrom').hide()"
+						role="button">关闭</a>
+				</div>
+			</div>
+		</form>
+	</div>
+ 
+	<script src="../js/holder.min.js"></script>
+	<script src="../js/index.js"></script>
+	<script>
+	$(function () {
+        $('#datetimepicker2').datetimepicker({
+        	  format: 'YYYY-MM-DD hh:mm:ss',  
+        	  locale: moment.locale('zh-cn')  
+        });
+        $('#datetimepicker3').datetimepicker({
+      	  format: 'YYYY-MM-DD hh:mm:ss',  
+      	  locale: moment.locale('zh-cn')  
+      });
+        $('#datetimepicker4').datetimepicker({
+        	  format: 'YYYY-MM-DD hh:mm:ss',  
+        	  locale: moment.locale('zh-cn')  
+        });
+    });
+		$(".editdata").click(function() {
+			var id = $(this).attr('tdid')
+			$.ajax({
+				url : "/apparatus/getTheData?id=" + id,
+				type : "get",
+				dataType : "json",
+				contentType : "application/json;charset=utf-8",
+				success : function(r) {
+					if (r.success) {
+						var data = r.data
+
+						$("#inputid").val(data.id)
+						$("#inputapparatus_name").val(data.apparatusName)
+						$("#inputmodel").val(data.model)
+						$("#inputprice").val(data.price)
+						$('#inputvendor_id').selectpicker('val',data.vendorId);
+						$("#inputstorage_time").val(data.storageTime)
+						$("#inputstorage_classify").val(data.storageClassify)
+						$("#inputlocation").val(data.location)
+						$("#inputuin").val(data.uin)
+						$("#inputProduction_date").val(data.productionDate)
+						$('#inputm_type').selectpicker('val',data.mtype);
+						$("#inputnext_m_time").val(data.nextMTime)
+						$("#inputremark").val(data.remark)
+						$("#inputstate").val(data.state)
+					} else {
+						alert(r.Msg);
+					}
+				}
+			});
+		})
+		$(".deldata").click(function() {
+			if (confirm('确定要删除吗')) {
+				var id = $(this).attr('tdid')
+				$.ajax({
+					url : "/apparatus/delData?id=" + id,
+					type : "get",
+					dataType : "json",
+					contentType : "application/json;charset=utf-8",
+					success : function(r) {
+						if (r.success) {
+							location.reload();
+						} else {
+							alert(r.Msg);
+						}
+					}
+				});
+			}
+		})
+		$(".lingqu").click(function() {
+			$(".lingqufrom").show()
+			var id = $(this).attr('tdid')
+			$.ajax({
+				url : "/apparatus/getTheData?id=" + id,
+				type : "get",
+				dataType : "json",
+				contentType : "application/json;charset=utf-8",
+				success : function(r) {
+					if (r.success) {
+						var data = r.data
+
+						$("#lqinputid").val(data.id)
+						$("#lqinputapparatus_name").val(data.apparatusName)
+						$("#lqinputmodel").val(data.model)
+						$("#lqinputprice").val(data.price)
+					} else {
+						alert(r.msg);
+					}
+				}
+			});
+			
+		})
+		
+		$(".lqsaveData").click(function() {
+			var id = $("#lqinputid").val();
+			var lqbz = $("#lqbz").val();
+			var lqtime = $("#lqtime").val();
+			$.ajax({
+				url : "/apparatus/receive",
+				type : "post",
+				dataType : "json",
+				data: JSON.stringify({apparatusId:id,remarks:lqbz,time:lqtime}),
+				contentType : "application/json;charset=utf-8",
+				success : function(r) {
+					if (r.success) {
+						alert(r.msg);
+						window.location.reload(true);
+					} else {
+						alert(r.msg);
+					}
+				}
+			});
+		})
+		
+		$(".saveData").click(function() {
+			if (confirm('确定保存吗')) {
+
+				var id = $("#inputid").val();
+				var apparatus_name = $("#inputapparatus_name").val();
+				var model = $("#inputmodel").val();
+				var price = $("#inputprice").val();
+				var vendor_id = $("#inputvendor_id").val();
+				var storage_time = $("#inputstorage_time").val();
+				var storage_classify = $("#inputstorage_classify").val();
+				var location = $("#inputlocation").val();
+				var uin = $("#inputuin").val();
+				var Production_date = $("#inputProduction_date").val();
+				var m_type = $("#inputm_type").val();
+				var next_m_time = $("#inputnext_m_time").val();
+				var remark = $("#inputremark").val();
+				var state = $("#inputstate").val();
+				var data = {
+					id : id,
+					apparatusName : apparatus_name,
+					model : model,
+					price : price,
+					vendorId : vendor_id,
+					storageTime : storage_time,
+					storageClassify : storage_classify,
+					location : location,
+					uin : uin,
+					productionDate : Production_date,
+					mtype : m_type,
+					nextMTime : next_m_time,
+					remark : remark,
+					state: state
+				}
+				$.ajax({
+					url : "/apparatus/saveData",
+					type : "post",
+					dataType : "json",
+					data : JSON.stringify(data),
+					contentType : "application/json;charset=utf-8",
+					success : function(r) {
+						if (r.success) {
+							window.location.reload(true);
+						} else {
+							alert(r.Msg);
+						}
+					},
+					error : function(e) {
+						alert("请求失败")
+					}
+				});
+			}
+		})
+	</script>
+</body>
+</html>

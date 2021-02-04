@@ -1,0 +1,24 @@
+<nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #de1515;" th:fragment="public_head">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#" style="color:#FFF;">安华元消防用品管理系统</a>
+      <a class="navbar-brand kai" href="#" style="color:#FFF;"><span class="glyphicon glyphicon-log-in"></span></a>
+      <a class="navbar-brand guan" href="#" style="color:#FFF;"><span class="glyphicon glyphicon-log-out"></span></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#" th:text="${session.loginName}"></a></li>
+        <li><a th:href="'/quit'" ><span class="glyphicon glyphicon-off" aria-hidden="true"></span></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+

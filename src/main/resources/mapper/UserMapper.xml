@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jdbc.dao.UserDao">
+	<!-- 返回值映射map -->
+	<resultMap id="userMapper" type="com.jdbc.model.UserModel">
+			<result property="id" column="id" />
+			<result property="userName" column="user_name" />
+			<result property="deptId" column="dept_id" />
+			<result property="roleId" column="role_id" />
+			<result property="employeeId" column="employee_id" />
+			<result property="loginName" column="Login_name" />
+			<result property="password" column="password" />
+			<result property="mobile" column="mobile" />
+			<result property="email" column="email" />
+	</resultMap>
+	
+	<!-- 查询数量公共sql -->
+	<sql id="count_Tail">
+		select count(1) from user record
+	</sql>
+	
+	<!-- 分页公共sql -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.pageSize}
+	</sql>
+
+	<!-- 查询字段公共sql -->
+	<sql id="selectAllColumns">
+	    SELECT 
+	    <if test="queryFields != null ">
+	 	     <trim prefix="" suffix="" suffixOverrides=",">
+		        <foreach collection="queryFields" item="fi" index="index">
+		          ${fi},
+		        </foreach>
+		      </trim> 	
+	  	</if>
+	    <if test="queryFields == null ">
+	  		<![CDATA[
+				 id, 
+				 user_name, 
+				 dept_id, 
+				 role_id, 
+				 employee_id, 
+				 Login_name, 
+				 password, 
+				 mobile, 
+				 email 
+			]]>
+	  	</if>
+	     FROM user record
+	</sql>
+	
+	<sql id="where_fragement">
+		<where> 
+			<if test="entity!=null">
+					<if test = "entity.id != null and entity.id != ''">
+						<![CDATA[ and record.id  = #{entity.id} ]]>
+					</if>
+					<if test = "entity.userName != null and entity.userName != ''">
+						<![CDATA[ and record.user_name  = #{entity.userName} ]]>
+					</if>
+					<if test = "entity.deptId != null and entity.deptId != ''">
+						<![CDATA[ and record.dept_id  = #{entity.deptId} ]]>
+					</if>
+					<if test = "entity.roleId != null and entity.roleId != ''">
+						<![CDATA[ and record.role_id  = #{entity.roleId} ]]>
+					</if>
+					<if test = "entity.employeeId != null and entity.employeeId != ''">
+						<![CDATA[ and record.employee_id  = #{entity.employeeId} ]]>
+					</if>
+					<if test = "entity.loginName != null and entity.loginName != ''">
+						<![CDATA[ and record.Login_name  = #{entity.loginName} ]]>
+					</if>
+					<if test = "entity.password != null and entity.password != ''">
+						<![CDATA[ and record.password  = #{entity.password} ]]>
+					</if>
+					<if test = "entity.mobile != null and entity.mobile != ''">
+						<![CDATA[ and record.mobile  = #{entity.mobile} ]]>
+					</if>
+					<if test = "entity.email != null and entity.email != ''">
+						<![CDATA[ and record.email  = #{entity.email} ]]>
+					</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="time_sort">
+		order by id asc
+	</sql>
+
+	<!-- 分页查询数据集合-->
+	<select id="queryPageUser" resultMap="userMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+		
+	</select>
+	
+	<!-- 不分页查询数据集合-->
+	<select id="queryListUser" resultMap="userMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="queryCountUser" resultType="long">
+		<include refid="count_Tail"></include>
+		<include refid="where_fragement"></include>
+	</select>
+
+	<!-- 查询单个实体 -->
+	<select id="queryUserById" resultMap="userMapper" >
+		<include refid="selectAllColumns"/>
+		 where 
+		 record.id = #{id}
+	</select>
+	
+	<!-- 新增列处理 -->
+	<sql id="sql_add_columns">
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="userName != null">user_name,</if>
+			<if test="deptId != null">dept_id,</if>
+			<if test="roleId != null">role_id,</if>
+			<if test="employeeId != null">employee_id,</if>
+			<if test="loginName != null">Login_name,</if>
+			<if test="password != null">password,</if>
+			<if test="mobile != null">mobile,</if>
+			<if test="email != null">email,</if>
+		</trim>
+	</sql>
+
+	<sql id="sql_add_properties">
+		<trim suffixOverrides=",">
+				<if test="id != null">#{id},</if>
+				<if test="userName != null">#{userName},</if>
+				<if test="deptId != null">#{deptId},</if>
+				<if test="roleId != null">#{roleId},</if>
+				<if test="employeeId != null">#{employeeId},</if>
+				<if test="loginName != null">#{loginName},</if>
+				<if test="password != null">#{password},</if>
+				<if test="mobile != null">#{mobile},</if>
+				<if test="email != null">#{email},</if>
+		</trim>		
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="addUser" parameterType="com.jdbc.model.UserModel">
+		insert into user(
+			<include refid="sql_add_columns"/>
+		)values(
+			<include refid="sql_add_properties"/>
+		)
+	</insert>
+
+	<!-- 编辑 -->
+	<update id="updateUser" parameterType="com.jdbc.model.UserModel">
+		update user record 
+			<set>
+					<if test = "userName != null ">
+						record.user_name = #{userName},
+					</if>
+					<if test = "deptId != null ">
+						record.dept_id = #{deptId},
+					</if>
+					<if test = "roleId != null ">
+						record.role_id = #{roleId},
+					</if>
+					<if test = "employeeId != null ">
+						record.employee_id = #{employeeId},
+					</if>
+					<if test = "loginName != null ">
+						record.Login_name = #{loginName},
+					</if>
+					<if test = "password != null ">
+						record.password = #{password},
+					</if>
+					<if test = "mobile != null ">
+						record.mobile = #{mobile},
+					</if>
+					<if test = "email != null ">
+						record.email = #{email}
+					</if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="removeUserByIds" parameterType="java.util.List">
+		delete from user 
+			where id in
+			<foreach collection="list" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+	</delete>
+
+	<delete id="removeUserById">
+		delete from user 
+		<if test=" id != null and id != ''">
+			where id = #{id}
+		</if>
+	</delete>
+	
+</mapper>

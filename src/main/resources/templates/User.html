@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+<title>管理后台</title>
+
+<!--bootstrap文件-->
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--bootstrap-select文件-->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<!--汉化组件-->
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-zh_CN.min.js"></script>
+
+
+<link href="../css/dashboard.css" rel="stylesheet">
+
+
+
+</head>
+<body>
+	<!-- 头部 -->
+	<div th:replace="./public/head :: public_head"></div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 菜单栏 -->
+			<div th:replace="./public/MenuBar :: public_menuBar"></div>
+
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+				<h2 class="sub-header">
+					<a href="javascript:void(0);" class="addData">添加数据</a>
+				</h2>
+
+				<div class="container-fluid">
+					<form action="/user/list" method="post">
+						<div class="row">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+									条件查找
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+											<div class="form-horizontal">
+												<div class="form-group">
+													<div class="col-md-3 control-label" for="select">会员姓名</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" runat="server"  th:value="${userModel.userName}"
+															name="userName" />
+													</div>
+													<div class="col-md-3 control-label" for="select">会员账号</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" runat="server" th:value="${userModel.LoginName}"
+															name="LoginName" />
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+											<div class="form-horizontal">
+												<div class="form-group">
+													<div class="col-md-3 control-label" for="select">员工编号</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" runat="server" th:value="${userModel.employeeId}"
+															name="employeeId" />
+													</div>
+													<div class="col-md-3 control-label" for="select">手机号</div>
+													<div class="col-md-3">
+														<input type="text" class="form-control" runat="server" th:value="${userModel.mobile}"
+															name="mobile" />
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+											<div class="form-horizontal">
+												 <div class="col-md-4">
+		                                            <input type="submit" ID="btnSearch" value=" 筛 选 "
+		                                                class="btn btn-success col-md-12 " />
+		                                        </div>
+											</div>
+										</div>
+									</div>
+									<!--查询 按钮-->
+								</div>
+							</div>
+
+							<!--/col-->
+						</div>
+					</form>
+					<!--/条件查找-->
+				</div>
+
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>id</th>
+								<th>用户姓名</th>
+								<th>部门id</th>
+								<th>角色id</th>
+								<th>员工编号</th>
+								<th>登录名</th>
+								<th>登录密码</th>
+								<th>手机号</th>
+								<th>邮箱</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="user,userStat:${userList}">
+								<td th:text="${user.id}"></td>
+								<td th:text="${user.userName}"></td>
+								<td th:text="${user.deptId}"></td>
+								<td th:text="${user.roleId}"></td>
+								<td th:text="${user.employeeId}"></td>
+								<td th:text="${user.LoginName}"></td>
+								<td th:text="${user.password}"></td>
+								<td th:text="${user.mobile}"></td>
+								<td th:text="${user.email}"></td>
+								<td><a href="javascript:void(0);"
+									class="tdFeatures editdata" th:attr="tdid=${user.id}"><span
+										class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+									&ensp;&ensp; <a href="javascript:void(0);"
+									class="tdFeatures deldata" th:attr="tdid=${user.id}"><span
+										class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- 分页 -->
+				<div class="bs-example" data-example-id="disabled-active-pagination"
+					style="text-align: center;">
+					<nav aria-label="...">
+						<ul class="pagination">
+							<li th:class="${page.pageNow <= 1}? 'disabled' : ''"><a
+								th:href="'/user/list?pageNow='+${page.pageNow - 1}"
+								aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+
+							<li th:each="i,stat:${#numbers.sequence(1, page.pageCount)}"
+								th:class="${page.pageNow == i}? 'active' : ''"><a
+								th:if="${i>0}" th:href="'/user/list?pageNow='+${i}"
+								th:text="${i}"></a></li>
+							<li><a th:href="'/user/list?pageNow='+${page.pageNow + 1}"
+								aria-label="Next"
+								th:class="${page.pageNow >= page.pageCount}? 'disabled' : ''"><span
+									aria-hidden="true">»</span></a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="editfrom">
+		<h2>编辑表单</h2>
+		<form class="form-horizontal" role="form">
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">id</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputid" type="text"
+						placeholder="id" name="id" value="" disabled>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">用户姓名</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputuser_name" type="text"
+						placeholder="用户姓名" name="user_name" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">部门id</label>
+				<div class="col-sm-10">
+					<select id="inputdept_id" name="dept_id" class="selectpicker"
+						title="请选择">
+						<option th:each="dept,deptStat:${selectdept}"
+							th:text="${dept.deptName}" th:attr="value=${dept.id}"></option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">角色id</label>
+				<div class="col-sm-10">
+					<select id="inputrole_id" name="role_id" class="selectpicker"
+						title="请选择">
+						<option th:each="role,roleStat:${selectrole}"
+							th:text="${role.roleName}" th:attr="value=${role.id}"></option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">员工编号</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputemployee_id" type="text" onkeyup="this.value=this.value.replace(/\D/g,'')"
+						placeholder="员工编号" name="employee_id" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">登录名</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputLogin_name" type="text"
+						placeholder="登录名" name="Login_name" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">登录密码</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputpassword" type="text"
+						placeholder="登录密码" name="password" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">手机号</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputmobile" type="text"
+						placeholder="手机号" name="mobile" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">邮箱</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputemail" type="text"
+						placeholder="邮箱" name="email" value="">
+				</div>
+			</div>
+			<div class="form-group">
+
+				<div class="form-button-div">
+					<a class="btn btn-primary saveData" href="#" role="button">保存</a>
+					&ensp;&ensp; <a class="btn btn-primary button-clone" href="#"
+						role="button">关闭</a>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script src="../js/holder.min.js"></script>
+	<script src="../js/index.js"></script>
+	<script>
+		$(".editdata").click(function() {
+			var id = $(this).attr('tdid')
+			$.ajax({
+				url : "/user/getTheData?id=" + id,
+				type : "get",
+				dataType : "json",
+				contentType : "application/json;charset=utf-8",
+				success : function(r) {
+					if (r.success) {
+						var data = r.data
+						$("#inputid").val(data.id)
+						$("#inputuser_name").val(data.userName)
+
+						$('#inputdept_id').selectpicker('val', data.deptId);
+						$('#inputrole_id').selectpicker('val', data.roleId);
+
+						$("#inputemployee_id").val(data.employeeId)
+						$("#inputLogin_name").val(data.loginName)
+						$("#inputpassword").val(data.password)
+						$("#inputmobile").val(data.mobile)
+						$("#inputemail").val(data.email)
+					} else {
+						alert(r.Msg);
+					}
+				}
+			});
+		})
+		$(".deldata").click(function() {
+			if (confirm('确定要删除吗')) {
+				var id = $(this).attr('tdid')
+				$.ajax({
+					url : "/user/delData?id=" + id,
+					type : "get",
+					dataType : "json",
+					contentType : "application/json;charset=utf-8",
+					success : function(r) {
+						if (r.success) {
+							location.reload();
+						} else {
+							alert(r.Msg);
+						}
+					}
+				});
+			}
+		})
+		$(".saveData").click(function() {
+			if (confirm('确定保存吗')) {
+
+				var id = $("#inputid").val();
+				var user_name = $("#inputuser_name").val();
+				var dept_id = $("#inputdept_id").val();
+				var role_id = $("#inputrole_id").val();
+				var employee_id = $("#inputemployee_id").val();
+				var Login_name = $("#inputLogin_name").val();
+				var password = $("#inputpassword").val();
+				var mobile = $("#inputmobile").val();
+				var email = $("#inputemail").val();
+				var data = {
+					id : id,
+					userName : user_name,
+					deptId : dept_id,
+					roleId : role_id,
+					employeeId : employee_id,
+					loginName : Login_name,
+					password : password,
+					mobile : mobile,
+					email : email
+				}
+				$.ajax({
+					url : "/user/saveData",
+					type : "post",
+					data : JSON.stringify(data),
+					contentType : "application/json;charset=utf-8",
+					success : function(r) {
+						if (r.success) {
+							location.reload();
+						} else {
+							alert(r.Msg);
+						}
+					},
+					error : function(e) {
+						alert("请求失败")
+					}
+				});
+			}
+		})
+	</script>
+</body>
+</html>

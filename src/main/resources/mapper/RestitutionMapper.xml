@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jdbc.dao.RestitutionDao">
+	<!-- 返回值映射map -->
+	<resultMap id="restitutionMapper" type="com.jdbc.model.RestitutionModel">
+			<result property="id" column="id" />
+			<result property="receiveId" column="receive_id" />
+			<result property="returnTime" column="return_time" />
+			<result property="state" column="state" />
+			<result property="createTime" column="create_time" />
+			<result property="remark" column="remark" />
+	</resultMap>
+	
+	<!-- 查询数量公共sql -->
+	<sql id="count_Tail">
+		select count(1) from restitution record
+	</sql>
+	
+	<!-- 分页公共sql -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.pageSize}
+	</sql>
+
+	<!-- 查询字段公共sql -->
+	<sql id="selectAllColumns">
+	    SELECT 
+	    <if test="queryFields != null ">
+	 	     <trim prefix="" suffix="" suffixOverrides=",">
+		        <foreach collection="queryFields" item="fi" index="index">
+		          ${fi},
+		        </foreach>
+		      </trim> 	
+	  	</if>
+	    <if test="queryFields == null ">
+	  		<![CDATA[
+				 id, 
+				 receive_id, 
+				 return_time, 
+				 state, 
+				 create_time, 
+				 remark 
+			]]>
+	  	</if>
+	     FROM restitution record
+	</sql>
+	
+	<sql id="where_fragement">
+		<where> 
+			<if test="entity!=null">
+					<if test = "entity.id != null and entity.id != ''">
+						<![CDATA[ and record.id  = #{entity.id} ]]>
+					</if>
+					<if test = "entity.receiveId != null and entity.receiveId != ''">
+						<![CDATA[ and record.receive_id  = #{entity.receiveId} ]]>
+					</if>
+					<if test = "entity.returnTime != null and entity.returnTime != ''">
+						<![CDATA[ and record.return_time  = #{entity.returnTime} ]]>
+					</if>
+					<if test = "entity.state != null and entity.state != ''">
+						<![CDATA[ and record.state  = #{entity.state} ]]>
+					</if>
+					<if test = "entity.createTime != null and entity.createTime != ''">
+						<![CDATA[ and record.create_time  = #{entity.createTime} ]]>
+					</if>
+					<if test = "entity.remark != null and entity.remark != ''">
+						<![CDATA[ and record.remark  = #{entity.remark} ]]>
+					</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="time_sort">
+		order by create_time asc
+	</sql>
+
+	<!-- 分页查询数据集合-->
+	<select id="queryPageRestitution" resultMap="restitutionMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+		
+	</select>
+	
+	<!-- 不分页查询数据集合-->
+	<select id="queryListRestitution" resultMap="restitutionMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="queryCountRestitution" resultType="long">
+		<include refid="count_Tail"></include>
+		<include refid="where_fragement"></include>
+	</select>
+
+	<!-- 查询单个实体 -->
+	<select id="queryRestitutionById" resultMap="restitutionMapper" >
+		<include refid="selectAllColumns"/>
+		 where 
+		 record.id = #{id}
+	</select>
+	
+	<!-- 新增列处理 -->
+	<sql id="sql_add_columns">
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="receiveId != null">receive_id,</if>
+			<if test="returnTime != null">return_time,</if>
+			<if test="state != null">state,</if>
+			<if test="createTime != null">create_time,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="sql_add_properties">
+		<trim suffixOverrides=",">
+				<if test="id != null">#{id},</if>
+				<if test="receiveId != null">#{receiveId},</if>
+				<if test="returnTime != null">#{returnTime},</if>
+				<if test="state != null">#{state},</if>
+				<if test="createTime != null">#{createTime},</if>
+				<if test="remark != null">#{remark},</if>
+		</trim>		
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="addRestitution" parameterType="com.jdbc.model.RestitutionModel">
+		insert into restitution(
+			<include refid="sql_add_columns"/>
+		)values(
+			<include refid="sql_add_properties"/>
+		)
+	</insert>
+
+	<!-- 编辑 -->
+	<update id="updateRestitution" parameterType="com.jdbc.model.RestitutionModel">
+		update restitution record 
+			<set>
+					<if test = "receiveId != null ">
+						record.receive_id = #{receiveId},
+					</if>
+					<if test = "returnTime != null ">
+						record.return_time = #{returnTime},
+					</if>
+					<if test = "state != null ">
+						record.state = #{state},
+					</if>
+					<if test = "createTime != null ">
+						record.create_time = #{createTime},
+					</if>
+					<if test = "remark != null ">
+						record.remark = #{remark}
+					</if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="removeRestitutionByIds" parameterType="java.util.List">
+		delete from restitution 
+			where id in
+			<foreach collection="list" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+	</delete>
+
+	<delete id="removeRestitutionById">
+		delete from restitution 
+		<if test=" id != null and id != ''">
+			where id = #{id}
+		</if>
+	</delete>
+	
+</mapper>

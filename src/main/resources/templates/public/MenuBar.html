@@ -1,0 +1,24 @@
+<div class="col-sm-3 col-md-2 sidebar" th:fragment="public_menuBar">
+	<ul class="nav nav-sidebar" th:if="${isadmin ==true}">
+		<li th:class="${menuclass=='apparatus'}? 'active' : ''"><a
+			href="/apparatus/list">入库信息</a></li>
+		<li th:class="${menuclass=='vendor'}? 'active' : ''"><a
+			href="/vendor/list">供应商信息</a></li>
+		<li th:class="${menuclass=='dept'}? 'active' : ''"><a
+			href="/dept/list">部门信息</a></li>
+		<li th:class="${menuclass=='role'}? 'active' : ''"><a
+			href="/role/list">角色信息</a></li>
+		<li th:class="${menuclass=='receive'}? 'active' : ''"><a
+			href="/receive/list">领用信息</a></li>
+		<li th:class="${menuclass=='restitution'}? 'active' : ''"><a
+			href="/restitution/list">归还信息</a></li>
+		<li th:class="${menuclass=='purview'}? 'active' : ''"><a
+			href="/purview/list">权限表</a></li>
+		<li th:class="${menuclass=='user'}? 'active' : ''"><a
+			href="/user/list">用户管理</a></li>
+	</ul>
+	<ul class="nav nav-sidebar" th:if="${isadmin == null}">
+		<li th:each="menu,menuStat:${menus}"  th:if="${#strings.containsIgnoreCase(menu.askurl,'list')}"><a
+			th:href="${menu.askurl}" th:text="${menu.menuname}"> </a></li>
+	</ul>
+</div>

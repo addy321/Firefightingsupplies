@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jdbc.dao.ApparatusDao">
+	<!-- 返回值映射map -->
+	<resultMap id="apparatusMapper" type="com.jdbc.model.ApparatusModel">
+			<result property="id" column="id" />
+			<result property="apparatusName" column="apparatus_name" />
+			<result property="model" column="model" />
+			<result property="price" column="price" />
+			<result property="vendorId" column="vendor_id" />
+			<result property="storageTime" column="storage_time" />
+			<result property="storageClassify" column="storage_classify" />
+			<result property="location" column="location" />
+			<result property="uin" column="uin" />
+			<result property="productionDate" column="Production_date" />
+			<result property="mtype" column="mtype" />
+			<result property="nextMTime" column="next_m_time" />
+			<result property="remark" column="remark" />
+			<result property="state" column="state" />
+	</resultMap>
+	
+	<!-- 查询数量公共sql -->
+	<sql id="count_Tail">
+		select count(1) from apparatus record
+	</sql>
+	
+	<!-- 分页公共sql -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.pageSize}
+	</sql>
+
+	<!-- 查询字段公共sql -->
+	<sql id="selectAllColumns">
+	    SELECT 
+	    <if test="queryFields != null ">
+	 	     <trim prefix="" suffix="" suffixOverrides=",">
+		        <foreach collection="queryFields" item="fi" index="index">
+		          ${fi},
+		        </foreach>
+		      </trim> 	
+	  	</if>
+	    <if test="queryFields == null ">
+	  		<![CDATA[
+				 id, 
+				 apparatus_name, 
+				 model, 
+				 price, 
+				 vendor_id, 
+				 storage_time, 
+				 storage_classify, 
+				 location, 
+				 uin, 
+				 Production_date, 
+				 mtype, 
+				 next_m_time, 
+				 remark,
+				 state
+			]]>
+	  	</if>
+	     FROM apparatus record
+	</sql>
+	
+	<sql id="where_fragement">
+		<where> 
+			<if test="entity!=null">
+					<if test = "entity.id != null and entity.id != ''">
+						<![CDATA[ and record.id  = #{entity.id} ]]>
+					</if>
+					<if test = "entity.apparatusName != null and entity.apparatusName != ''">
+						<![CDATA[ and record.apparatus_name  LIKE CONCAT('%', #{entity.apparatusName},'%') ]]>
+					</if>
+					<if test = "entity.model != null and entity.model != ''">
+						<![CDATA[ and record.model  = #{entity.model} ]]>
+					</if>
+					<if test = "entity.price != null and entity.price != ''">
+						<![CDATA[ and record.price  = #{entity.price} ]]>
+					</if>
+					<if test = "entity.vendorId != null and entity.vendorId != ''">
+						<![CDATA[ and record.vendor_id  = #{entity.vendorId} ]]>
+					</if>
+					<if test = "entity.storageTime != null and entity.storageTime != ''">
+						<![CDATA[ and record.storage_time  = #{entity.storageTime} ]]>
+					</if>
+					<if test = "entity.storageClassify != null and entity.storageClassify != ''">
+						<![CDATA[ and record.storage_classify  = #{entity.storageClassify} ]]>
+					</if>
+					<if test = "entity.location != null and entity.location != ''">
+						<![CDATA[ and record.location  = #{entity.location} ]]>
+					</if>
+					<if test = "entity.uin != null and entity.uin != ''">
+						<![CDATA[ and record.uin  = #{entity.uin} ]]>
+					</if>
+					<if test = "entity.productionDate != null and entity.productionDate != ''">
+						<![CDATA[ and record.Production_date  = #{entity.productionDate} ]]>
+					</if>
+					<if test = "entity.mtype != null and entity.mtype != ''">
+						<![CDATA[ and record.mtype  = #{entity.mtype} ]]>
+					</if>
+					<if test = "entity.nextMTime != null and entity.nextMTime != ''">
+						<![CDATA[ and record.next_m_time  = #{entity.nextMTime} ]]>
+					</if>
+					<if test = "entity.remark != null and entity.remark != ''">
+						<![CDATA[ and record.remark  = #{entity.remark} ]]>
+					</if>
+					<if test = "entity.state != null and entity.state != ''">
+						<![CDATA[ and record.state  = #{entity.state} ]]>
+					</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="time_sort">
+		order by id asc
+	</sql>
+
+	<!-- 分页查询数据集合-->
+	<select id="queryPageApparatus" resultMap="apparatusMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+		
+	</select>
+	
+	<!-- 不分页查询数据集合-->
+	<select id="queryListApparatus" resultMap="apparatusMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="queryCountApparatus" resultType="long">
+		<include refid="count_Tail"></include>
+		<include refid="where_fragement"></include>
+	</select>
+
+	<!-- 查询单个实体 -->
+	<select id="queryApparatusById" resultMap="apparatusMapper" >
+		<include refid="selectAllColumns"/>
+		 where 
+		 record.id = #{id}
+	</select>
+	
+	<!-- 新增列处理 -->
+	<sql id="sql_add_columns">
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="apparatusName != null">apparatus_name,</if>
+			<if test="model != null">model,</if>
+			<if test="price != null">price,</if>
+			<if test="vendorId != null">vendor_id,</if>
+			<if test="storageTime != null">storage_time,</if>
+			<if test="storageClassify != null">storage_classify,</if>
+			<if test="location != null">location,</if>
+			<if test="uin != null">uin,</if>
+			<if test="productionDate != null">Production_date,</if>
+			<if test="mtype != null">mtype,</if>
+			<if test="nextMTime != null">next_m_time,</if>
+			<if test="remark != null">remark,</if>
+			<if test="state != null">state,</if>
+		</trim>
+	</sql>
+
+	<sql id="sql_add_properties">
+		<trim suffixOverrides=",">
+				<if test="id != null">#{id},</if>
+				<if test="apparatusName != null">#{apparatusName},</if>
+				<if test="model != null">#{model},</if>
+				<if test="price != null">#{price},</if>
+				<if test="vendorId != null">#{vendorId},</if>
+				<if test="storageTime != null">#{storageTime},</if>
+				<if test="storageClassify != null">#{storageClassify},</if>
+				<if test="location != null">#{location},</if>
+				<if test="uin != null">#{uin},</if>
+				<if test="productionDate != null">#{productionDate},</if>
+				<if test="mtype != null">#{mtype},</if>
+				<if test="nextMTime != null">#{nextMTime},</if>
+				<if test="remark != null">#{remark},</if>
+				<if test="state != null">#{state},</if>
+		</trim>		
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="addApparatus" parameterType="com.jdbc.model.ApparatusModel">
+		insert into apparatus(
+			<include refid="sql_add_columns"/>
+		)values(
+			<include refid="sql_add_properties"/>
+		)
+	</insert>
+
+	<!-- 编辑 -->
+	<update id="updateApparatus" parameterType="com.jdbc.model.ApparatusModel">
+		update apparatus record 
+			<set>
+					<if test = "apparatusName != null ">
+						record.apparatus_name = #{apparatusName},
+					</if>
+					<if test = "model != null ">
+						record.model = #{model},
+					</if>
+					<if test = "price != null ">
+						record.price = #{price},
+					</if>
+					<if test = "vendorId != null ">
+						record.vendor_id = #{vendorId},
+					</if>
+					<if test = "storageTime != null ">
+						record.storage_time = #{storageTime},
+					</if>
+					<if test = "storageClassify != null ">
+						record.storage_classify = #{storageClassify},
+					</if>
+					<if test = "location != null ">
+						record.location = #{location},
+					</if>
+					<if test = "uin != null ">
+						record.uin = #{uin},
+					</if>
+					<if test = "productionDate != null ">
+						record.Production_date = #{productionDate},
+					</if>
+					<if test = "mtype != null ">
+						record.mtype = #{mtype},
+					</if>
+					
+					<if test = "remark != null ">
+						record.remark = #{remark},
+					</if>
+					<if test = "state != null ">
+						record.state = #{state},
+					</if>
+						record.next_m_time = #{nextMTime}
+			</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="removeApparatusByIds" parameterType="java.util.List">
+		delete from apparatus 
+			where id in
+			<foreach collection="list" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+	</delete>
+
+	<delete id="removeApparatusById">
+		delete from apparatus 
+		<if test=" id != null and id != ''">
+			where id = #{id}
+		</if>
+	</delete>
+	
+</mapper>

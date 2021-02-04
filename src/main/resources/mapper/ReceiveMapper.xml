@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jdbc.dao.ReceiveDao">
+	<!-- 返回值映射map -->
+	<resultMap id="receiveMapper" type="com.jdbc.model.ReceiveModel">
+			<result property="id" column="id" />
+			<result property="apparatusId" column="apparatus_id" />
+			<result property="userId" column="user_id" />
+			<result property="receiveTime" column="receive_time" />
+			<result property="returnTime" column="return_time" />
+			<result property="createTime" column="create_time" />
+			<result property="remark" column="remark" />
+	</resultMap>
+	
+	<!-- 查询数量公共sql -->
+	<sql id="count_Tail">
+		select count(1) from receive record
+	</sql>
+	
+	<!-- 分页公共sql -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.pageSize}
+	</sql>
+
+	<!-- 查询字段公共sql -->
+	<sql id="selectAllColumns">
+	    SELECT 
+	    <if test="queryFields != null ">
+	 	     <trim prefix="" suffix="" suffixOverrides=",">
+		        <foreach collection="queryFields" item="fi" index="index">
+		          ${fi},
+		        </foreach>
+		      </trim> 	
+	  	</if>
+	    <if test="queryFields == null ">
+	  		<![CDATA[
+				 id, 
+				 apparatus_id, 
+				 user_id, 
+				 receive_time, 
+				 return_time, 
+				 create_time, 
+				 remark 
+			]]>
+	  	</if>
+	     FROM receive record
+	</sql>
+	
+	<sql id="where_fragement">
+		<where> 
+			<if test="entity!=null">
+					<if test = "entity.id != null and entity.id != ''">
+						<![CDATA[ and record.id  = #{entity.id} ]]>
+					</if>
+					<if test = "entity.apparatusId != null and entity.apparatusId != ''">
+						<![CDATA[ and record.apparatus_id  = #{entity.apparatusId} ]]>
+					</if>
+					<if test = "entity.userId != null and entity.userId != ''">
+						<![CDATA[ and record.user_id  = #{entity.userId} ]]>
+					</if>
+					<if test = "entity.receiveTime != null and entity.receiveTime != ''">
+						<![CDATA[ and record.receive_time  = #{entity.receiveTime} ]]>
+					</if>
+					<if test = "entity.returnTime != null and entity.returnTime != ''">
+						<![CDATA[ and record.return_time  = #{entity.returnTime} ]]>
+					</if>
+					<if test = "entity.createTime != null and entity.createTime != ''">
+						<![CDATA[ and record.create_time  = #{entity.createTime} ]]>
+					</if>
+					<if test = "entity.remark != null and entity.remark != ''">
+						<![CDATA[ and record.remark  = #{entity.remark} ]]>
+					</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="time_sort">
+		order by id asc
+	</sql>
+
+	<!-- 分页查询数据集合-->
+	<select id="queryPageReceive" resultMap="receiveMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+		
+	</select>
+	
+	<!-- 不分页查询数据集合-->
+	<select id="queryListReceive" resultMap="receiveMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="queryCountReceive" resultType="long">
+		<include refid="count_Tail"></include>
+		<include refid="where_fragement"></include>
+	</select>
+
+	<!-- 查询单个实体 -->
+	<select id="queryReceiveById" resultMap="receiveMapper" >
+		<include refid="selectAllColumns"/>
+		 where 
+		 record.id = #{id}
+	</select>
+	
+	<!-- 新增列处理 -->
+	<sql id="sql_add_columns">
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="apparatusId != null">apparatus_id,</if>
+			<if test="userId != null">user_id,</if>
+			<if test="receiveTime != null">receive_time,</if>
+			<if test="returnTime != null">return_time,</if>
+			<if test="createTime != null">create_time,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="sql_add_properties">
+		<trim suffixOverrides=",">
+				<if test="id != null">#{id},</if>
+				<if test="apparatusId != null">#{apparatusId},</if>
+				<if test="userId != null">#{userId},</if>
+				<if test="receiveTime != null">#{receiveTime},</if>
+				<if test="returnTime != null">#{returnTime},</if>
+				<if test="createTime != null">#{createTime},</if>
+				<if test="remark != null">#{remark},</if>
+		</trim>		
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="addReceive" parameterType="com.jdbc.model.ReceiveModel">
+		insert into receive(
+			<include refid="sql_add_columns"/>
+		)values(
+			<include refid="sql_add_properties"/>
+		)
+	</insert>
+
+	<!-- 编辑 -->
+	<update id="updateReceive" parameterType="com.jdbc.model.ReceiveModel">
+		update receive record 
+			<set>
+					<if test = "apparatusId != null ">
+						record.apparatus_id = #{apparatusId},
+					</if>
+					<if test = "userId != null ">
+						record.user_id = #{userId},
+					</if>
+					<if test = "receiveTime != null ">
+						record.receive_time = #{receiveTime},
+					</if>
+					<if test = "returnTime != null ">
+						record.return_time = #{returnTime},
+					</if>
+					<if test = "createTime != null ">
+						record.create_time = #{createTime},
+					</if>
+					<if test = "remark != null ">
+						record.remark = #{remark}
+					</if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="removeReceiveByIds" parameterType="java.util.List">
+		delete from receive 
+			where id in
+			<foreach collection="list" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+	</delete>
+
+	<delete id="removeReceiveById">
+		delete from receive 
+		<if test=" id != null and id != ''">
+			where id = #{id}
+		</if>
+	</delete>
+	
+</mapper>

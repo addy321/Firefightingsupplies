@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+<title>管理后台</title>
+
+<!--bootstrap文件-->
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!--bootstrap-select文件-->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<!--汉化组件-->
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-zh_CN.min.js"></script>
+
+
+<script
+	src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+<link
+	href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
+	rel="stylesheet" />
+<script
+	src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+<link href="../css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+	<!-- 头部 -->
+	<div th:replace="./public/head :: public_head"></div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 菜单栏 -->
+			<div th:replace="./public/MenuBar :: public_menuBar"></div>
+
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+				<h2 class="sub-header">
+					<a href="javascript:void(0);" class="addData">添加数据</a>
+				</h2>
+				<div class="container-fluid">
+					<form action="/receive/list" method="post">
+						<div class="row">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+									条件查找
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										 <div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+			                                <div class="form-horizontal">
+			                                   <div class="form-group">
+													<div class="col-md-3 control-label" for="select">消防用品名称</div>
+													<div class="col-md-3">
+														<select  name="apparatusId"  class="selectpicker"  title="请选择" >
+														  	<option value="">全部</option>
+														    <option th:each="apparatus,apparatusStat:${apparatusSelect}" th:text="${apparatus.apparatusName}" th:attr="value=${apparatus.id}"
+														     th:selected="${receiveModel.apparatusId eq apparatus.id}"></option>  
+														</select>
+													</div>
+												</div>
+			                                </div>
+			                            </div>
+			                            <div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+			                                <div class="form-horizontal">
+			                                   <div class="form-group">
+													<div class="col-md-3 control-label" for="select">用戶</div>
+													<div class="col-md-3">
+														<select  name="userId"  class="selectpicker"  title="请选择">
+															<option value="">全部</option>
+														    <option th:each="user,userStat:${userSelect}" th:text="${user.userName}" 
+														    th:attr="value=${user.id}" th:selected="${receiveModel.userId eq user.id}"></option>  
+														</select>
+													</div>
+												</div>
+			                                </div>
+			                            </div>
+										<div class="col-lg-4 col-sm-8 col-xs-8 col-xxs-12">
+											<div class="form-horizontal">
+												 <div class="col-md-4">
+		                                            <input type="submit" ID="btnSearch" value=" 筛 选 "
+		                                                class="btn btn-success col-md-12 " />
+		                                        </div>
+											</div>
+										</div>
+									</div>
+									<!--查询 按钮-->
+								</div>
+							</div>
+
+							<!--/col-->
+						</div>
+					</form>
+					<!--/条件查找-->
+				</div>
+				
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>id</th>
+								<th>领用的消防用品id</th>
+								<th>领用用户id</th>
+								<th>领用时间</th>
+								<th>约定归还时间</th>
+								<th>创建时间</th>
+								<th>备注</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="receive,receiveStat:${receiveList}">
+								<td th:text="${receive.id}"></td>
+								<td th:text="${receive.apparatusId}"></td>
+								<td th:text="${receive.userId}"></td>
+								<td th:text="${receive.receiveTime}"></td>
+								<td th:text="${receive.returnTime}"></td>
+								<td th:text="${receive.createTime}"></td>
+								<td th:text="${receive.remark}"></td>
+								<td><a href="javascript:void(0);"
+									class="tdFeatures editdata" th:attr="tdid=${receive.id}"><span
+										class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+									&ensp;&ensp; <a href="javascript:void(0);"
+									class="tdFeatures deldata" th:attr="tdid=${receive.id}"><span
+										class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- 分页 -->
+				<div class="bs-example" data-example-id="disabled-active-pagination"
+					style="text-align: center;">
+					<nav aria-label="...">
+						<ul class="pagination">
+							<li th:class="${page.pageNow <= 1}? 'disabled' : ''"><a
+								th:href="'/receive/list?pageNow='+${page.pageNow - 1}"
+								aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+
+							<li th:each="i,stat:${#numbers.sequence(1, page.pageCount)}"
+								th:class="${page.pageNow == i}? 'active' : ''"><a
+								th:if="${i>0}" th:href="'/receive/list?pageNow='+${i}"
+								th:text="${i}"></a></li>
+							<li><a
+								th:href="'/receive/list?pageNow='+${page.pageNow + 1}"
+								aria-label="Next"
+								th:class="${page.pageNow >= page.pageCount}? 'disabled' : ''"><span
+									aria-hidden="true">»</span></a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="editfrom">
+		<h2>编辑表单</h2>
+		<form class="form-horizontal" role="form">
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">id</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputid" type="text"
+						placeholder="id" name="id" value="" disabled>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">领用的消防用品id</label>
+				<div class="col-sm-10">
+					<select  id="inputapparatus_id" name="apparatus_id"  class="selectpicker"  title="请选择">
+					    <option th:each="apparatus,apparatusStat:${apparatusSelect}" th:text="${apparatus.apparatusName}" th:attr="value=${apparatus.id}"></option>  
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">领用用户id</label>
+				<div class="col-sm-10">
+					<select  id="inputuser_id" name="user_id"  class="selectpicker"  title="请选择">
+					    <option th:each="user,userStat:${userSelect}" th:text="${user.userName}" th:attr="value=${user.id}"></option>  
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">领用时间</label>
+				<div class="col-sm-10">
+					<div class='input-group date' id='datetimepicker2'>
+		               <input type='text' class="form-control"  id="inputreceive_time" name="receive_time"  />
+		               <span class="input-group-addon">
+		               		<span class="glyphicon glyphicon-calendar"></span>
+		               </span>
+		            </div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">约定归还时间</label>
+				<div class="col-sm-10">
+					<div class='input-group date' id='datetimepicker3'>
+		               <input type='text' class="form-control"  id="inputreturn_time" name="return_time"  />
+		               <span class="input-group-addon">
+		               		<span class="glyphicon glyphicon-calendar"></span>
+		               </span>
+		            </div>
+				</div>
+			</div>
+
+			<div class="form-group" hidden>
+				<label class="col-sm-2 control-label">创建时间</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputcreate_time" type="text"
+						placeholder="创建时间" name="create_time" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">备注</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="inputremark" type="text"
+						placeholder="备注" name="remark" value="">
+				</div>
+			</div>
+
+			<div class="form-group">
+
+				<div class="form-button-div">
+					<a class="btn btn-primary saveData" href="#" role="button">保存</a>
+					&ensp;&ensp; <a class="btn btn-primary button-clone" href="#"
+						role="button">关闭</a>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script src="../js/holder.min.js"></script>
+	<script src="../js/index.js"></script>
+	<script>
+	$(function () {
+        $('#datetimepicker2').datetimepicker({
+        	  format: 'YYYY-MM-DD hh:mm:ss',  
+        	  locale: moment.locale('zh-cn')  
+        });
+        $('#datetimepicker3').datetimepicker({
+      	  format: 'YYYY-MM-DD hh:mm:ss',  
+      	  locale: moment.locale('zh-cn')  
+      });
+    });
+		$(".editdata").click(function() {
+			var id = $(this).attr('tdid')
+			$.ajax({
+				url : "/receive/getTheData?id=" + id,
+				type : "get",
+				dataType : "json",
+				contentType : "application/json;charset=utf-8",
+				success : function(r) {
+					if (r.success) {
+						var data = r.data
+
+						$("#inputid").val(data.id)
+						$('#inputapparatus_id').selectpicker('val',data.apparatusId);
+						$('#inputuser_id').selectpicker('val',data.userId);
+						$("#inputreceive_time").val(data.receiveTime)
+						$("#inputreturn_time").val(data.returnTime)
+						$("#inputcreate_time").val(data.createTime)
+						$("#inputremark").val(data.remark)
+					} else {
+						alert(r.Msg);
+					}
+				}
+			});
+		})
+		$(".deldata").click(function() {
+			if (confirm('确定要删除吗')) {
+				var id = $(this).attr('tdid')
+				$.ajax({
+					url : "/receive/delData?id=" + id,
+					type : "get",
+					dataType : "json",
+					contentType : "application/json;charset=utf-8",
+					success : function(r) {
+						if (r.success) {
+							location.reload();
+						} else {
+							alert(r.Msg);
+						}
+					}
+				});
+			}
+		})
+		$(".saveData").click(function() {
+			if (confirm('确定保存吗')) {
+
+				var id = $("#inputid").val();
+				var apparatus_id = $("#inputapparatus_id").val();
+				var user_id = $("#inputuser_id").val();
+				var receive_time = $("#inputreceive_time").val();
+				var return_time = $("#inputreturn_time").val();
+				var create_time = $("#inputcreate_time").val();
+				var remark = $("#inputremark").val();
+				var data = {
+					id : id,
+					apparatusId : apparatus_id,
+					userId : user_id,
+					receiveTime : receive_time,
+					returnTime : return_time,
+					createTime : create_time,
+					remark : remark
+				}
+				$.ajax({
+					url : "/receive/saveData",
+					type : "post",
+					dataType : "json",
+					data : JSON.stringify(data),
+					contentType : "application/json;charset=utf-8",
+					success : function(r) {
+						if (r.success) {
+							location.reload();
+						} else {
+							alert(r.Msg);
+						}
+					},
+					error : function(e) {
+						alert("请求失败")
+					}
+				});
+			}
+		})
+	</script>
+</body>
+</html>

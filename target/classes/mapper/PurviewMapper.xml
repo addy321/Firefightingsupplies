@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jdbc.dao.PurviewDao">
+	<!-- 返回值映射map -->
+	<resultMap id="purviewMapper" type="com.jdbc.model.PurviewModel">
+			<result property="id" column="id" />
+			<result property="roleid" column="roleid" />
+			<result property="askurl" column="askurl" />
+			<result property="menuname" column="menuname" />
+	</resultMap>
+	
+	<!-- 查询数量公共sql -->
+	<sql id="count_Tail">
+		select count(1) from purview record
+	</sql>
+	
+	<!-- 分页公共sql -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.pageSize}
+	</sql>
+
+	<!-- 查询字段公共sql -->
+	<sql id="selectAllColumns">
+	    SELECT 
+	    <if test="queryFields != null ">
+	 	     <trim prefix="" suffix="" suffixOverrides=",">
+		        <foreach collection="queryFields" item="fi" index="index">
+		          ${fi},
+		        </foreach>
+		      </trim> 	
+	  	</if>
+	    <if test="queryFields == null ">
+	  		<![CDATA[
+				 id, 
+				 roleid, 
+				 askurl,
+				 menuname
+			]]>
+	  	</if>
+	     FROM purview record
+	</sql>
+	
+	<sql id="where_fragement">
+		<where> 
+			<if test="entity!=null">
+					<if test = "entity.id != null and entity.id != ''">
+						<![CDATA[ and record.id  = #{entity.id} ]]>
+					</if>
+					<if test = "entity.roleid != null and entity.roleid != ''">
+						<![CDATA[ and record.roleid  = #{entity.roleid} ]]>
+					</if>
+					<if test = "entity.askurl != null and entity.askurl != ''">
+						<![CDATA[ and record.askurl  = #{entity.askurl} ]]>
+					</if>
+					<if test = "entity.menuname != null and entity.menuname != ''">
+						<![CDATA[ and record.menuname  = #{entity.menuname} ]]>
+					</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="time_sort">
+		order by id asc
+	</sql>
+
+	<!-- 分页查询数据集合-->
+	<select id="queryPagePurview" resultMap="purviewMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+		
+	</select>
+	
+	<!-- 不分页查询数据集合-->
+	<select id="queryListPurview" resultMap="purviewMapper" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<include refid="time_sort" />
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="queryCountPurview" resultType="long">
+		<include refid="count_Tail"></include>
+		<include refid="where_fragement"></include>
+	</select>
+
+	<!-- 查询单个实体 -->
+	<select id="queryPurviewById" resultMap="purviewMapper" >
+		<include refid="selectAllColumns"/>
+		 where 
+		 record.id = #{id}
+	</select>
+	
+	<!-- 新增列处理 -->
+	<sql id="sql_add_columns">
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="roleid != null">roleid,</if>
+			<if test="askurl != null">askurl,</if>
+			<if test="menuname != null">menuname</if>
+		</trim>
+	</sql>
+
+	<sql id="sql_add_properties">
+		<trim suffixOverrides=",">
+				<if test="id != null">#{id},</if>
+				<if test="roleid != null">#{roleid},</if>
+				<if test="askurl != null">#{askurl},</if>
+				<if test="menuname != null">#{menuname}</if>
+		</trim>		
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="addPurview" parameterType="com.jdbc.model.PurviewModel">
+		insert into purview(
+			<include refid="sql_add_columns"/>
+		)values(
+			<include refid="sql_add_properties"/>
+		)
+	</insert>
+
+	<!-- 编辑 -->
+	<update id="updatePurview" parameterType="com.jdbc.model.PurviewModel">
+		update purview record 
+			<set>
+					<if test = "roleid != null ">
+						record.roleid = #{roleid},
+					</if>
+					<if test = "askurl != null ">
+						record.askurl = #{askurl},
+					</if>
+					<if test = "menuname != null ">
+						record.menuname = #{menuname}
+					</if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="removePurviewByIds" parameterType="java.util.List">
+		delete from purview 
+			where id in
+			<foreach collection="list" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+	</delete>
+
+	<delete id="removePurviewById">
+		delete from purview 
+		<if test=" id != null and id != ''">
+			where id = #{id}
+		</if>
+	</delete>
+	
+</mapper>

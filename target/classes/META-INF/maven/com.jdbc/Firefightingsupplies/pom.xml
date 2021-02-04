@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.jdbc</groupId>
+  <artifactId>Firefightingsupplies</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+   	<parent>
+		<!-- 这个特殊的依赖包含了应用运行需要的所有信息，它包含了Spring Boot应用所必须的类似于Spring FrameWork（spring-core）、 
+			Spring Test（spring-test）等基础依赖的依赖描述。你只需要使用这个parent pom就能完成所有的依赖描述添加工作，可以看成SpringBoot的版本仲裁中心，Ctrl+click可以看到你们已经列出了许多版本依赖，若没有在dependencies里管理的依赖则仍需要写版本。 
+			spring-boot-starter-parent 是一个特殊的starter，它用来提供相关的Maven默认依赖。使用它之后，常用的包依赖可以省去version标签 -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.7.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<!-- 添加这个依赖之后就可以创建一个web应用程序。starter poms部分可以引入所有需要在实际项目中使用的依赖。 这个依赖中主要是关于boot的核心jar，spring核心jar，自动配置的相关的jar，以及日志，注解，yaml相关的类库 -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<!-- 添加这个依赖之后就可以创建一个web应用程序。starter poms部分可以引入所有需要在实际项目中使用的依赖。 spring-boot-starter-web依赖包含所有的spring-core, 
+				spring-web, spring-webmvc，嵌入的Tomcat server和其他web应用相关的库。 -->
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<!-- 热部署 -->
+		<dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-devtools</artifactId>
+	        <optional>true</optional>
+	    </dependency>
+	    
+	    <!-- thymeleaf模板 -->
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- mysql -->
+		 <dependency>
+	        <groupId>mysql</groupId>
+	        <artifactId>mysql-connector-java</artifactId>
+	    </dependency>
+	    <!-- mybatis-->
+		<dependency>
+		    <groupId>org.mybatis.spring.boot</groupId>
+		    <artifactId>mybatis-spring-boot-starter</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
+	</dependencies>
+
+	<!--这个插件可以将应用打包成可执行的war包 -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
